@@ -2,6 +2,8 @@
 
 This repository provides different implementations of the following matrix operation:
 
+![Screenshot 2024-09-03 182522](https://github.com/user-attachments/assets/b1901da2-31f4-4b84-9132-140f7f62e141)
+
 where:
 
   - A and B are NxN square matrices of type double
