@@ -1,0 +1,250 @@
+======================Tema3ASC=====================
+
+Blas:
+    m am folosit de functiile oferite de biblioteca Blas pentru a realiza operatiile de inmultire a matricilor.
+    functia "cblas_dtrmm" am folosit-o pentru a realiza inmultirea unei matrici superior triunghiulare cu una normala.
+    functia "cblas_dgemm" am folosit-o pentru a realiza inmultirea a doua matrici normale.
+    functia "cblas_daxpy" am folosit-o pentru a realiza adunarea a doua matrici.
+    Run=./tema3_blas: N=400: Time=0.026471
+    Run=./tema3_blas: N=800: Time=0.187742
+    Run=./tema3_blas: N=1200: Time=0.604774
+
+Neop:
+    Am facut operatiile pe matrici in ordinea din ecuatie,
+    Am tinut cont la inmultiri de faptul ca matricea A este triunghiulara superioara si am facut inmultirea
+        doar cu elementele de deasupra diagonalei.
+    Complexitate: O(n^3)
+    Run=./tema3_neopt: N=400: Time=0.603224
+    Run=./tema3_neopt: N=800: Time=4.782885
+    Run=./tema3_neopt: N=1200: Time=16.104345
+
+Opt:
+    Am pastrat aceeasi complexitate ca la neopt.
+    M am folosit de pointeri pentru a parcurge matricile.
+    M am folosit de pointeri pentru a renunta la calculul indecsilor,fiind incrementati la fiecare termin din matrice, sau suma.
+    M am folosit de tipul de date "register" pentru a stoca datele necesare inmultirii matricilor in registrele procesorului,
+        astfel eliminand overhead-ul accesului la memorie.
+    Am calculat initial A transpus, pentru a avea elementele pe linii si nu pe coloane,cand fac inmultirea.
+    Run=./tema3_opt_m: N=400: Time=0.162131
+    Run=./tema3_opt_m: N=800: Time=1.209012
+    Run=./tema3_opt_m: N=1200: Time=3.872288
+    Run=./tema3_opt_m: Bonus=8p
+
+Cachegrind:
+
+Neop:
+    ==2508159== I refs:        5,925,574,163
+    ==2508159== I1  misses:            1,666
+    ==2508159== LLi misses:            1,591
+    ==2508159== I1  miss rate:          0.00%
+    ==2508159== LLi miss rate:          0.00%
+    ==2508159== 
+    ==2508159== D refs:        2,964,986,758  (2,832,721,641 rd   + 132,265,117 wr)
+    ==2508159== D1  misses:       77,521,747  (   77,450,494 rd   +      71,253 wr)
+    ==2508159== LLd misses:          113,272  (       62,170 rd   +      51,102 wr)
+    ==2508159== D1  miss rate:           2.6% (          2.7%     +         0.1%  )
+    ==2508159== LLd miss rate:           0.0% (          0.0%     +         0.0%  )
+    ==2508159== 
+    ==2508159== LL refs:          77,523,413  (   77,452,160 rd   +      71,253 wr)
+    ==2508159== LL misses:           114,863  (       63,761 rd   +      51,102 wr)
+    ==2508159== LL miss rate:            0.0% (          0.0%     +         0.0%  )
+    ==2508159== 
+    ==2508159== Branches:        133,490,974  (  133,250,310 cond +     240,664 ind)
+    ==2508159== Mispredicts:         502,594  (      502,358 cond +         236 ind)
+    ==2508159== Mispred rate:            0.4% (          0.4%     +         0.1%   )
+
+
+    Referințe de Instrucțiuni (I refs): 
+        CPU-ul a preluat un total de 5,925,574,163 instrucțiuni pentru a le executa pe durata execuției programului.
+    Cache-ului de Instrucțiuni de Nivel 1 (I1):
+        Cache-ul de nivel 1 a avut 1,666 eșecuri, ceea ce înseamnă că CPU-ul nu a găsit instrucțiunile necesare în L1
+        și a trebuit să le preia dintr-o memorie mai lentă. Rata de eșec pentru L1 a fost de 0.00%, indicând
+        o eficiență foarte mare.
+    Cache-ului de Instrucțiuni de Ultimul Nivel (LLi):
+        Cache-ul de ultim nivel a înregistrat 1,591 eșecuri, unde CPU-ul nu a găsit instrucțiunile necesare
+        în cache-ul L2 sau L3 și a trebuit să le preia din memoria principală. 
+        Rata de eșec a fost de 0.00%, sugerând că LLi este foarte eficient.
+    Referințe de Date (D refs):
+        Au fost efectuate 2,964,986,758 accesări de date, dintre care 2,832,721,641 au fost citiri și 132,265,117 au fost scrieri.
+    Cache-ului de Date de Nivel 1 (D1):
+        Cache-ul de date L1 a avut 77,521,747 eșecuri, cu 77,450,494 eșecuri la citiri și 71,253 eșecuri la scrieri. 
+        Rata generală de eșecuri pentru L1 a fost de 2.6%, cu 2.7% pentru citiri și 0.1% pentru scrieri.
+        Ratele de pierdere pentru acestea sunt relativ mici,
+    Cache-ului de Date de Ultimul Nivel (LLd):
+        Cache-ul de ultim nivel pentru date a înregistrat 113,272 eșecuri, dintre care 62,170 la citiri și 51,102 la scrieri. 
+        Rata de eșec a fost de 0.0%, indicând o utilizare eficientă a acestui cache.
+    Referințe și Pierderi ale Cache-ului de Ultimul Nivel (LL):
+        Cache-ul de ultim nivel a fost accesat de 77,523,413 ori, cu 77,452,160 accesări la citiri și 71,253 accesări la scrieri.
+        Au fost înregistrate 114,863 eșecuri în total, cu 63,761 eșecuri la citiri și 51,102 la scrieri,
+        iar rata de eșec a fost de 0.0%.
+    Instrucțiuni de Ramificație (Branches):
+        Programul a avut un total de 133,490,974 instrucțiuni de ramificație, din care 133,250,310 au fost
+        ramificații condiționale și 240,664 ramificații indirecte.
+    Predicții Greșite (Mispredicts):
+        Au fost înregistrate 502,594 predicții greșite, cu 502,358 pentru ramificații condiționale 
+        și 236 pentru ramificații indirecte.
+        Rata de predicții greșite a fost de 0.4% în total, cu 0.4% pentru ramificații condiționale
+        și 0.1% pentru ramificații indirecte.
+        Ratele de pierdere pentru acestea sunt relativ mici,
+    
+Opt:
+     ==2509777== Cachegrind, a cache and branch-prediction profiler
+    ==2509777== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+    ==2509777== Using Valgrind-3.21.0 and LibVEX; rerun with -h for copyright info
+    ==2509777== Command: ./tema3_opt_m ../input/input_valgrind
+    ==2509777== 
+    --2509777-- warning: L3 cache found, using its data for the LL simulation.
+    Run=./tema3_opt_m: N=400: Time=9.717676
+    Run=./tema3_opt_m: Bonus=0p
+    ==2509777== 
+    ==2509777== I refs:        1,924,081,150
+    ==2509777== I1  misses:            1,647
+    ==2509777== LLi misses:            1,577
+    ==2509777== I1  miss rate:          0.00%
+    ==2509777== LLi miss rate:          0.00%
+    ==2509777== 
+    ==2509777== D refs:          399,549,656  (395,286,094 rd   + 4,263,562 wr)
+    ==2509777== D1  misses:       52,485,233  ( 52,253,975 rd   +   231,258 wr)
+    ==2509777== LLd misses:          142,780  (     71,676 rd   +    71,104 wr)
+    ==2509777== D1  miss rate:          13.1% (       13.1    +       5.4%  )
+    ==2509777== LLd miss rate:           0.0% (        0.0%     +       1.7%  )
+    ==2509777== 
+    ==2509777== LL refs:          52,486,880  ( 52,255,622 rd   +   231,258 wr)
+    ==2509777== LL misses:           144,357  (     73,253 rd   +    71,104 wr)
+    ==2509777== LL miss rate:            0.0% (        0.0%     +       1.7%  )
+    ==2509777== 
+    ==2509777== Branches:        133,651,867  (133,411,185 cond +   240,682 ind)
+    ==2509777== Mispredicts:         503,027  (    502,788 cond +       239 ind)
+    ==2509777== Mispred rate:            0.4% (        0.4%     +       0.1%   )
+
+    
+    Referințe de Instrucțiuni (I refs): 
+        CPU-ul a preluat un total de 1,924,081,150 instrucțiuni pentru a le executa pe durata execuției programului.
+    Cache-ului de Instrucțiuni de Nivel 1 (I1):
+        Cache-ul de nivel 1 a avut 1,647 eșecuri, ceea ce înseamnă că CPU-ul nu a găsit instrucțiunile necesare în L1
+        și a trebuit să le preia dintr-o memorie mai lentă. Rata de eșec pentru L1 a fost de 0.00%, indicând
+        o eficiență foarte mare.
+    Cache-ului de Instrucțiuni de Ultimul Nivel (LLi):
+        Cache-ul de ultim nivel a înregistrat 1,577 eșecuri, unde CPU-ul nu a găsit instrucțiunile necesare
+        în cache-ul L2 sau L3 și a trebuit să le preia din memoria principală. 
+        Rata de eșec a fost de 0.00%, sugerând că LLi este foarte eficient.
+    Referințe de Date (D refs):
+        Au fost efectuate 399,549,656 accesări de date, dintre care 395,286,094 au fost citiri și 4,263,562 au fost scrieri.
+    Cache-ului de Date de Nivel 1 (D1):
+        Cache-ul de date L1 a avut  52,485,233  eșecuri, cu 52,253,975 eșecuri la citiri și 231,258 eșecuri la scrieri. 
+        Rata generală de eșecuri pentru L1 a fost de 13.1%, cu 13.1% pentru citiri și 5.4% pentru scrieri.
+    Cache-ului de Date de Ultimul Nivel (LLd):
+        Cache-ul de ultim nivel pentru date a înregistrat 142,780 eșecuri, dintre care 71,676 la citiri și 71,104 la scrieri. 
+        Rata de eșec a fost de 0.0%, indicând o utilizare eficientă a acestui cache.
+    Referințe și Pierderi ale Cache-ului de Ultimul Nivel (LL):
+        Cache-ul de ultim nivel a fost accesat de 52,486,880 ori, cu 52,255,622 accesări la citiri și 231,258 accesări la scrieri.
+        Au fost înregistrate 144,357  eșecuri în total, cu 73,253 eșecuri la citiri și 71,104 la scrieri,
+        iar rata de eșec a fost de 0.0%.
+    Instrucțiuni de Ramificație (Branches):
+        Programul a avut un total de 133,651,867 instrucțiuni de ramificație, din care 133,411,185 au fost
+        ramificații condiționale și 240,682 ramificații indirecte.
+    Predicții Greșite (Mispredicts):
+        Au fost înregistrate  503,027 predicții greșite, cu 502,788 pentru ramificații condiționale 
+        și 239 pentru ramificații indirecte.
+        Rata de predicții greșite a fost de 0.4% în total, cu 0.4% pentru ramificații condiționale
+        și 0.1% pentru ramificații indirecte.
+        Ratele de pierdere pentru acestea sunt relativ mici,
+
+
+Optimizările manuale realizate în varianta 'opt_m' au avut următoarele efecte:
+
+    Reducerea numărului de instrucțiuni și accesări de date**:
+        Numărul total de instrucțiuni și accesări de date a fost redus semnificativ, ceea ce sugerează
+        o eficiență crescută a codului optimizat.
+    Menținerea eficienței cache-ului de instrucțiuni: 
+        Cache-ul de instrucțiuni L1 și de ultim nivel au rămas la fel de eficiente,
+        în ciuda reducerii numărului total de instrucțiuni.
+    Creșterea presiunii asupra cache-ului de date: 
+        Cache-ul de date L1 a înregistrat o rată de eșec mai mare.
+    Mai multe eșecuri în cache-ul de ultim nivel pentru date: 
+        Cache-ul de ultim nivel pentru date a înregistrat mai multe eșecuri, dar rata de eșec pentru
+        citiri a rămas la 0.0%, indicând o gestionare eficientă a datelor.
+    Predictorul de ramificații neafectat: 
+        Predictorul de ramificații și-a menținut performanța, indicând că optimizările nu au
+        avut un impact negativ asupra acestuia.
+
+
+Blas:
+    ==2511447== 
+    ==2511447== I refs:        250,256,636
+    ==2511447== I1  misses:         23,191
+    ==2511447== LLi misses:          3,525
+    ==2511447== I1  miss rate:        0.01%
+    ==2511447== LLi miss rate:        0.00%
+    ==2511447== 
+    ==2511447== D refs:         99,118,658  (89,694,048 rd   + 9,424,610 wr)
+    ==2511447== D1  misses:      1,754,686  ( 1,432,027 rd   +   322,659 wr)
+    ==2511447== LLd misses:        120,175  (    11,744 rd   +   108,431 wr)
+    ==2511447== D1  miss rate:         1.8% (       1.6%     +       3.4%  )
+    ==2511447== LLd miss rate:         0.1% (       0.0%     +       1.2%  )
+    ==2511447== 
+    ==2511447== LL refs:         1,777,877  ( 1,455,218 rd   +   322,659 wr)
+    ==2511447== LL misses:         123,700  (    15,269 rd   +   108,431 wr)
+    ==2511447== LL miss rate:          0.0% (       0.0%     +       1.2%  )
+    ==2511447== 
+    ==2511447== Branches:        8,374,216  ( 8,119,901 cond +   254,315 ind)
+    ==2511447== Mispredicts:        66,426  (    65,523 cond +       903 ind)
+    ==2511447== Mispred rate:          0.8% (       0.8%     +       0.4%   )
+
+    Referințe de Instrucțiuni (I refs): 
+        CPU-ul a preluat un total de 250,256,636 instrucțiuni pentru a le executa pe durata execuției programului.
+    Cache-ului de Instrucțiuni de Nivel 1 (I1):
+        Cache-ul de nivel 1 a avut 23,191 eșecuri, ceea ce înseamnă că CPU-ul nu a găsit instrucțiunile necesare în L1
+        și a trebuit să le preia dintr-o memorie mai lentă. Rata de eșec pentru L1 a fost de 0.01%, indicând
+        o eficiență foarte mare.
+    Cache-ului de Instrucțiuni de Ultimul Nivel (LLi):
+        Cache-ul de ultim nivel a înregistrat 3,525 eșecuri, unde CPU-ul nu a găsit instrucțiunile necesare
+        în cache-ul L2 sau L3 și a trebuit să le preia din memoria principală. 
+        Rata de eșec a fost de 0.00%, sugerând că LLi este foarte eficient.
+    Referințe de Date (D refs):
+        Au fost efectuate  99,118,658  accesări de date, dintre care 89,694,048 au fost citiri și 9,424,610 au fost scrieri.
+    Cache-ului de Date de Nivel 1 (D1):
+        Cache-ul de date L1 a avut 1,754,686 eșecuri, cu  1,432,027 eșecuri la citiri și 322,659 eșecuri la scrieri. 
+        Rata generală de eșecuri pentru L1 a fost de 1.8%, cu 1.6% pentru citiri și 3.4% pentru scrieri.
+        Ratele de pierdere pentru acestea sunt relativ mici,
+    Cache-ului de Date de Ultimul Nivel (LLd):
+        Cache-ul de ultim nivel pentru date a înregistrat  120,175 eșecuri, dintre care 11,744 la citiri și 108,431 la scrieri. 
+        Rata de eșec a fost de 0.1%, indicând o utilizare eficientă a acestui cache.
+    Referințe și Pierderi ale Cache-ului de Ultimul Nivel (LL):
+        Cache-ul de ultim nivel a fost accesat de 1,777,877 ori, cu  1,455,218 accesări la citiri și 322,659  accesări la scrieri.
+        Au fost înregistrate 123,700 eșecuri în total, cu 15,269 eșecuri la citiri și  108,431 la scrieri,
+        iar rata de eșec a fost de 0.0%.
+    Instrucțiuni de Ramificație (Branches):
+        Programul a avut un total de  8,374,216 instrucțiuni de ramificație, din care 8,119,901 au fost
+        ramificații condiționale și 254,315 ramificații indirecte.
+    Predicții Greșite (Mispredicts):
+        Au fost înregistrate 66,426 predicții greșite, cu 65,523 pentru ramificații condiționale 
+        și 903 pentru ramificații indirecte.
+        Rata de predicții greșite a fost de 0.8% în total, cu 0.8% pentru ramificații condiționale
+        și 0.4% pentru ramificații indirecte.
+        Ratele de pierdere pentru acestea sunt relativ mici,
+    
+    Aceste statistici indica faptul ca programul are o performanta buna in ceea ce priveste accesurile la cache
+     si predicțiile de branch-uri.
+
+Analiză comparativă a performanței
+    graficul se gaseste in fisierul analiza.jpg
+    Am rulat 5 teste pentru dimensiunile: 400, 800, 1200, 1400,1600
+    Analizand graficul, putem face urmatoarele observatii pe baza performantelor obtinute  pentru 1200 <= N <= 1600:
+        -opt_m este, in medie, de 4 ori mai rapid ca cel neoptimizat
+        -blas este, in medie, de 11 ori mai rapid ca cel optimizat
+
+Concluzie:
+    implementarea folosind biblioteca Blas este cea mai eficienta, urmata de implementarea optimizata manual.
+    odata cu cresterea dimensiunii matricilor, diferenta de performanta intre cele doua implementari creste,
+    graficul metodei blas ramanand constant, in timp ce cel al metodei optimizate manual creste liniar.
+
+
+
+
+
+
+  
+
+
+    
